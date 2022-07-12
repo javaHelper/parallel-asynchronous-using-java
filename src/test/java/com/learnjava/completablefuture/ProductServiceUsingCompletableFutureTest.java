@@ -22,7 +22,6 @@ public class ProductServiceUsingCompletableFutureTest {
 
     @Test
     void retrieveProductDetails() {
-
         //given
         String productId = "ABC123";
         startTimer();
@@ -35,14 +34,10 @@ public class ProductServiceUsingCompletableFutureTest {
         assertNotNull(product);
         assertTrue(product.getProductInfo().getProductOptions().size() > 0);
         assertNotNull(product.getReview());
-
     }
-
-
 
     @Test
     void retrieveProductDetails_CF() {
-
         //given
         String productId = "ABC123";
         startTimer();
@@ -51,16 +46,13 @@ public class ProductServiceUsingCompletableFutureTest {
         CompletableFuture<Product> cfProduct = pscf.retrieveProductDetails_CF(productId);
 
         //then
-        cfProduct
-                .thenAccept((product -> {
+        cfProduct.thenAccept((product -> {
                     assertNotNull(product);
                     assertTrue(product.getProductInfo().getProductOptions().size() > 0);
                     assertNotNull(product.getReview());
                 }))
                 .join();
-
         timeTaken();
-
     }
 
     @Test

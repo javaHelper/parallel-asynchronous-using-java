@@ -20,13 +20,18 @@ public class CompletableFutureHelloWorld {
     }
 
     public CompletableFuture<String> helloWorld() {
-
         return CompletableFuture.supplyAsync(() -> hws.helloWorld())//  runs this in a common fork-join pool
                 .thenApply(String::toUpperCase);
     }
 
-    public CompletableFuture<String> helloWorld_withSize() {
+    public String helloWorld_1() {
+        return CompletableFuture.supplyAsync(() -> hws.helloWorld())//  runs this in a common fork-join pool
+                .thenApply(String::toUpperCase)
+                .join();
 
+    }
+    
+    public CompletableFuture<String> helloWorld_withSize() {
         return CompletableFuture.supplyAsync(() -> hws.helloWorld())//  runs this in a common fork-join pool
                 .thenApply(String::toUpperCase)
                 .thenApply((s) -> s.length() + " - " + s);
@@ -41,9 +46,7 @@ public class CompletableFutureHelloWorld {
                 .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenApply(String::toUpperCase)
                 .join();
-
         timeTaken();
-
         return hw;
     }
 
@@ -64,7 +67,6 @@ public class CompletableFutureHelloWorld {
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
@@ -78,17 +80,14 @@ public class CompletableFutureHelloWorld {
         });
 
         String hw = hello
-                // .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenCombine(world, (h, w) -> {
                     log("thenCombine h/w ");
                     return h + w;
                 }) // (first,second)
-                //.thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenCombine(hiCompletableFuture, (previous, current) -> {
                     log("thenCombine , previous/current");
                     return previous + current;
                 })
-                //.thenApply(String::toUpperCase)
                 .thenApply(s -> {
                     log("thenApply");
                     return s.toUpperCase();
@@ -96,7 +95,6 @@ public class CompletableFutureHelloWorld {
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
@@ -110,33 +108,27 @@ public class CompletableFutureHelloWorld {
         });
 
         String hw = hello
-                // .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenCombineAsync(world, (h, w) -> {
                     log("thenCombine h/w ");
                     return h + w;
                 }) // (first,second)
-                //.thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenCombineAsync(hiCompletableFuture, (previous, current) -> {
                     this.hws.hello();
                     log("thenCombine , previous/current");
                     return previous + current;
                 })
-                //.thenApply(String::toUpperCase)
                 .thenApplyAsync(s -> {
                     this.hws.hello();
                     log("thenApply");
                     return s.toUpperCase();
                 })
                 .join();
-
         timeTaken();
-
         return hw;
     }
 
 
     public String helloWorld_3_async_calls_custom_threadPool() {
-
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         startTimer();
@@ -149,17 +141,14 @@ public class CompletableFutureHelloWorld {
         }, executorService);
 
         String hw = hello
-                // .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenCombine(world, (h, w) -> {
                     log("thenCombine h/w ");
                     return h + w;
                 }) // (first,second)
-                //.thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenCombine(hiCompletableFuture, (previous, current) -> {
                     log("thenCombine , previous/current");
                     return previous + current;
                 })
-                //.thenApply(String::toUpperCase)
                 .thenApply(s -> {
                     log("thenApply");
                     return s.toUpperCase();
@@ -167,40 +156,29 @@ public class CompletableFutureHelloWorld {
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
     public String helloWorld_3_async_calls_custom_threadpool_async() {
-
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         startTimer();
         CompletableFuture<String> hello = CompletableFuture.supplyAsync(() -> this.hws.hello(), executorService);
         CompletableFuture<String> world = CompletableFuture.supplyAsync(() -> this.hws.world(), executorService);
-
         CompletableFuture<String> hiCompletableFuture = CompletableFuture.supplyAsync(() -> {
             // delay(1000);
             return " HI CompletableFuture!";
         }, executorService);
 
         String hw = hello
-                // .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenCombineAsync(world, (h, w) -> {
                     log("thenCombine h/w ");
                     return h + w;
                 }, executorService) // (first,second)
-
-                /*  .thenCombineAsync(world, (h, w) -> {
-                      log("thenCombine h/w ");
-                      return h + w;
-                  }) // with no executor service as an input*/
-                //.thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenCombineAsync(hiCompletableFuture, (previous, current) -> {
                     log("thenCombine , previous/current");
                     return previous + current;
                 }, executorService)
-                //.thenApply(String::toUpperCase)
                 .thenApply(s -> {
                     log("thenApply");
                     return s.toUpperCase();
@@ -208,7 +186,6 @@ public class CompletableFutureHelloWorld {
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
@@ -226,7 +203,6 @@ public class CompletableFutureHelloWorld {
             return " Bye!";
         });
 
-
         String hw = hello
                 .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
@@ -235,12 +211,10 @@ public class CompletableFutureHelloWorld {
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
     public CompletableFuture<String> helloWorld_thenCompose() {
-
         CompletableFuture<String> helloWorldFuture = CompletableFuture.supplyAsync(() -> this.hws.hello())
                 .thenCompose(previous -> hws.worldFuture(previous))
                 //.thenApply(previous -> helloWorldService.worldFuture(previous))
@@ -250,6 +224,12 @@ public class CompletableFutureHelloWorld {
 
     }
 
+    /**
+     * Returns a new CompletableFuture that is completed when all of the given CompletableFutures complete. If any of the given CompletableFutures
+     * complete exceptionally, then the returned CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+     * Otherwise, the results, if any, of the given CompletableFutures are not reflected in the returned CompletableFuture, but may be obtained
+     * by inspecting them individually. If no CompletableFutures are provided, returns a CompletableFuture completed with the value null.
+     */
     public String allOf() {
         startTimer();
 
@@ -265,16 +245,27 @@ public class CompletableFutureHelloWorld {
 
         List<CompletableFuture<String>> cfList = List.of(cf1, cf2);
         CompletableFuture<Void> cfAllOf = CompletableFuture.allOf(cfList.toArray(new CompletableFuture[cfList.size()]));
-        String result = cfAllOf.thenApply(v -> cfList.stream()
+
+        String result = cfAllOf
+                .thenApply(v -> cfList.stream()
                 .map(CompletableFuture::join)
-                .collect(joining())).join();
-
+                .collect(joining()))
+                .join();
         timeTaken();
-
         return result;
-
     }
 
+    /**
+     * Returns a new CompletableFuture that is completed when any of the given CompletableFutures complete, with the same result.
+     * Otherwise, if it completed exceptionally, the returned CompletableFuture also does so, with a CompletionException holding this exception as its cause.
+     * If no CompletableFutures are provided, returns an incomplete CompletableFuture.
+     * Params:
+     * cfs – the CompletableFutures
+     * Returns:
+     * a new CompletableFuture that is completed with the result or exception of any of the given CompletableFutures when one completes
+     * Throws:
+     * NullPointerException – if the array or any of its elements are null
+     */
     public String anyOf() {
         startTimer();
 
@@ -310,14 +301,6 @@ public class CompletableFutureHelloWorld {
     }
 
 
-    public String helloWorld_1() {
-
-        return CompletableFuture.supplyAsync(() -> hws.helloWorld())//  runs this in a common fork-join pool
-                .thenApply(String::toUpperCase)
-                .join();
-
-    }
-
     public CompletableFuture<String> complete(String input) {
 
         CompletableFuture<String> completableFuture = new CompletableFuture();
@@ -332,7 +315,6 @@ public class CompletableFutureHelloWorld {
     }
 
     public static void main(String[] args) {
-
         HelloWorldService helloWorldService = new HelloWorldService();
         CompletableFuture.supplyAsync(() -> helloWorldService.helloWorld()) //  runs this in a common fork-join pool
                 .thenApply(String::toUpperCase)

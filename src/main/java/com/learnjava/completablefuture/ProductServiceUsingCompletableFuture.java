@@ -4,6 +4,7 @@ import com.learnjava.domain.*;
 import com.learnjava.service.InventoryService;
 import com.learnjava.service.ProductInfoService;
 import com.learnjava.service.ReviewService;
+import com.learnjava.util.CommonUtil;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -29,20 +30,19 @@ public class ProductServiceUsingCompletableFuture {
     }
 
     public Product retrieveProductDetails(String productId) {
-
-        startTimer();
+    	CommonUtil.startTimer();
         CompletableFuture<ProductInfo> cfProductInfo = CompletableFuture.supplyAsync(() -> productInfoService.retrieveProductInfo(productId));
         CompletableFuture<Review> cfReview = CompletableFuture.supplyAsync(() -> reviewService.retrieveReviews(productId));
 
         Product product = cfProductInfo
                 .thenCombine(cfReview, (productInfo, review) -> new Product(productId, productInfo, review))
                 .join(); // blocks the thread
-        timeTaken();
+        
+        CommonUtil.timeTaken();
         return product;
     }
 
     public CompletableFuture<Product> retrieveProductDetails_CF(String productId) {
-
         CompletableFuture<ProductInfo> cfProductInfo = CompletableFuture.supplyAsync(() -> productInfoService.retrieveProductInfo(productId));
         CompletableFuture<Review> cfReview = CompletableFuture.supplyAsync(() -> reviewService.retrieveReviews(productId));
 
@@ -52,7 +52,6 @@ public class ProductServiceUsingCompletableFuture {
 
 
     public Product retrieveProductDetailsWithInventory(String productId) {
-
         startTimer();
         CompletableFuture<ProductInfo> cfProductInfo = CompletableFuture.supplyAsync(() -> productInfoService.retrieveProductInfo(productId))
                 .thenApply((productInfo -> {
@@ -172,7 +171,9 @@ public class ProductServiceUsingCompletableFuture {
 
         ProductInfoService productInfoService = new ProductInfoService();
         ReviewService reviewService = new ReviewService();
+        
         ProductServiceUsingCompletableFuture productService = new ProductServiceUsingCompletableFuture(productInfoService, reviewService);
+        
         String productId = "ABC123";
         Product product = productService.retrieveProductDetails(productId);
         log("Product is " + product);

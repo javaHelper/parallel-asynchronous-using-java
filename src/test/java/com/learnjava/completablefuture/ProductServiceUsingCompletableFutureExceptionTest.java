@@ -30,13 +30,11 @@ public class ProductServiceUsingCompletableFutureExceptionTest {
 
     @Test
     void retrieveProductDetails_reviewServiceError() {
-
         //given
         String productId = "ABC123";
         when(pisMock.retrieveProductInfo(any())).thenCallRealMethod();
         when(rssMock.retrieveReviews(any())).thenThrow(new RuntimeException("Exception Occurred"));
         when(isMock.retrieveInventory(any(ProductOption.class))).thenCallRealMethod();
-
 
         //when
         Product product = pscf.retrieveProductDetailsWithInventory_approach2(productId);
@@ -53,7 +51,6 @@ public class ProductServiceUsingCompletableFutureExceptionTest {
         long count = product.getProductInfo().getProductOptions().stream()
                 .count();
         System.out.println("count : "+count);
-
     }
 
     @Test
@@ -91,6 +88,5 @@ public class ProductServiceUsingCompletableFutureExceptionTest {
 
         });
         assertNotNull(product.getReview());
-
     }
 }

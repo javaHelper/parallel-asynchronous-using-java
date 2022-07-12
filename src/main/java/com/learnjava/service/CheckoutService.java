@@ -23,7 +23,6 @@ public class CheckoutService {
     }
 
     public CheckoutResponse checkout(Cart cart) {
-
         startTimer();
         List<CartItem> priceValidationList = cart.getCartItemList()
                 //.stream()

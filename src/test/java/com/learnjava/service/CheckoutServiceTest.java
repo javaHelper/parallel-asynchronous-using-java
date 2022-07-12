@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CheckoutServiceTest {
 
     PriceValidatorService priceValidatorService = new PriceValidatorService();
-
     CheckoutService checkoutService = new CheckoutService(priceValidatorService);
 
     @Test
@@ -30,7 +29,6 @@ class CheckoutServiceTest {
 
     @Test
     void checkout_6_items() {
-
         //given
         Cart cart = DataSet.createCart(6);
 
@@ -39,7 +37,7 @@ class CheckoutServiceTest {
 
         //then
         assertEquals(CheckoutStatus.SUCCESS, checkoutResponse.getCheckoutStatus());
-        assertTrue(checkoutResponse.getFinalRate()>0);
+        assertTrue(checkoutResponse.getFinalRate() > 0);
     }
 
     @Test

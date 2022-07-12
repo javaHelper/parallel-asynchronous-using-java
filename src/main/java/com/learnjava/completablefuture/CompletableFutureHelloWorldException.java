@@ -26,17 +26,16 @@ public class CompletableFutureHelloWorldException {
 
         String hw = hello
                 .handle((result, e) -> { // this gets invoked for both success and failure
-                    log("result is : " + result);
+                    log("## result is : " + result);
                     if (e != null) {
-                        log("Exception is : " + e.getMessage());
+                        log("-- Exception is : " + e.getMessage());
                         return "";
                     }
                     return result;
-
                 })
                 .thenCombine(world, (h, w) -> h + w) // (first,second)
                 .handle((result, e) -> { // this gets invoked for both success and failure
-                    log("result is : " + result);
+                    log("## result is : " + result);
                     if (e != null) {
                         log("Exception Handle after world : " + e.getMessage());
                         return "";
@@ -45,11 +44,9 @@ public class CompletableFutureHelloWorldException {
                 })
                 .thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenApply(String::toUpperCase)
-
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
@@ -74,11 +71,9 @@ public class CompletableFutureHelloWorldException {
                 })
                 .thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenApply(String::toUpperCase)
-
                 .join();
 
         timeTaken();
-
         return hw;
     }
 
@@ -112,11 +107,9 @@ public class CompletableFutureHelloWorldException {
                 })
                 .thenCombine(hiCompletableFuture, (previous, current) -> previous + current)
                 .thenApply(String::toUpperCase)
-
                 .join();
 
         timeTaken();
         return hw;
     }
-
 }
